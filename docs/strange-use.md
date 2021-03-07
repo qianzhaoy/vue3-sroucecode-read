@@ -96,3 +96,29 @@ const app = Vue.createApp({
 
 app.mount("#app")
 ```
+
+### render 函数参数的意义
+```javascript
+render!.call(
+  proxyToUse,
+  proxyToUse!, // 经过 Proxy 包装的组件上下文, 里面有 props && state && 实例 api && 插件全局属性 === this
+  renderCache, // render 函数缓存. 但是没看到哪里做了缓存
+  props,
+  setupState, // state
+  data, 
+  ctx // 上下文. 看起来是没被 proxy 包装的 this
+)
+const proxyToUse = withProxy || proxy
+instance.withProxy = new Proxy(
+  instance.ctx,
+  RuntimeCompiledPublicInstanceProxyHandlers
+)
+
+// example
+{
+  render(proxyToUse) {
+    proxyToUse === this // true
+    return <div></div>
+  }
+}
+```

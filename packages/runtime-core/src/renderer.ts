@@ -449,7 +449,7 @@ function baseCreateRenderer(
 
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
-  // TIP: n1代表 old component , n2代表 new component
+  // TIP: n1代表 old component vnode , n2代表 new component vnode
   // 每渲染一个标签就会 patch 一下
   const patch: PatchFn = (
     n1,
@@ -1372,6 +1372,7 @@ function baseCreateRenderer(
         if (__DEV__) {
           startMeasure(instance, `render`)
         }
+        // 划重点: subTree: 执行 render 函数之后拿到的 vnode
         const subTree = (instance.subTree = renderComponentRoot(instance))
         if (__DEV__) {
           endMeasure(instance, `render`)

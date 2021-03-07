@@ -24,7 +24,7 @@ rentime-dom.ts
     |  mountComponent()
     |    |
     |    setupComponent()
-    |    setupRenderEffect() // set update function and invoke
+    |    setupRenderEffect() // set update function and invoke. (invoke component render function)
     |      |
     | -----patch // until real element
 

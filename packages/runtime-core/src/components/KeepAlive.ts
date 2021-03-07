@@ -62,7 +62,6 @@ export interface KeepAliveContext extends ComponentRenderContext {
 export const isKeepAlive = (vnode: VNode): boolean =>
   (vnode.type as any).__isKeepAlive
 
-// TODO: 看
 const KeepAliveImpl = {
   name: `KeepAlive`,
 
@@ -226,6 +225,7 @@ const KeepAliveImpl = {
         current = null
         return children
       } else if (
+        // tip: 如果不是 vnode 或者 不是 SUSPENSE 组件, 不缓存
         !isVNode(rawVNode) ||
         (!(rawVNode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) &&
           !(rawVNode.shapeFlag & ShapeFlags.SUSPENSE))
@@ -239,6 +239,7 @@ const KeepAliveImpl = {
       const name = getName(comp)
       const { include, exclude, max } = props
 
+      // tip: 不缓存逻辑判断
       if (
         (include && (!name || !matches(include, name))) ||
         (exclude && name && matches(exclude, name))
@@ -251,6 +252,8 @@ const KeepAliveImpl = {
       const cachedVNode = cache.get(key)
 
       // clone vnode if it's reused because we are going to mutate it
+      // tip: 正常情况下 没有 el. 
+      // keep-alive 组件 render 的时候, 但是 children 没变. 此时应该才有 el.
       if (vnode.el) {
         vnode = cloneVNode(vnode)
         if (rawVNode.shapeFlag & ShapeFlags.SUSPENSE) {
@@ -266,6 +269,8 @@ const KeepAliveImpl = {
 
       if (cachedVNode) {
         // copy over mounted state
+        // 划重点: 这次就是缓存的重要逻辑. 将 cachedVnode 的 dom 和 vue componentInstance 赋值给 vnode. 
+        // 实例里面有 state 和 attrs. 这样就实现了状态保持. dom 也得到了复用
         vnode.el = cachedVNode.el
         vnode.component = cachedVNode.component
         if (vnode.transition) {
@@ -274,6 +279,7 @@ const KeepAliveImpl = {
         }
         // avoid vnode being mounted as fresh
         vnode.shapeFlag |= ShapeFlags.COMPONENT_KEPT_ALIVE
+        // 更新 key 的新鲜度. 因为有 max 的存在. 所以新鲜度越高越不会被移出缓存
         // make this key the freshest
         keys.delete(key)
         keys.add(key)

@@ -455,6 +455,7 @@ export const RuntimeCompiledPublicInstanceProxyHandlers = extend(
 // In dev mode, the proxy target exposes the same properties as seen on `this`
 // for easier console inspection. In prod mode it will be an empty object so
 // these properties definitions can be skipped.
+// TIP: 创建 instance.ctx
 export function createRenderContext(instance: ComponentInternalInstance) {
   const target: Record<string, any> = {}
 
@@ -465,6 +466,7 @@ export function createRenderContext(instance: ComponentInternalInstance) {
     get: () => instance
   })
 
+  // tip: 注入公共实例方法
   // expose public properties
   Object.keys(publicPropertiesMap).forEach(key => {
     Object.defineProperty(target, key, {
@@ -477,6 +479,7 @@ export function createRenderContext(instance: ComponentInternalInstance) {
     })
   })
 
+  // tip: 注入全局方法
   // expose global properties
   const { globalProperties } = instance.appContext.config
   Object.keys(globalProperties).forEach(key => {

@@ -505,6 +505,7 @@ export function cloneVNode<T, U>(
     // they *should* be copied for kept-alive vnodes. So we just always copy
     // them since them being non-null during a mount doesn't affect the logic as
     // they will simply be overwritten.
+    // 划重点: 当前组件状态. keep-alive 用
     component: vnode.component,
     suspense: vnode.suspense,
     ssContent: vnode.ssContent && cloneVNode(vnode.ssContent),

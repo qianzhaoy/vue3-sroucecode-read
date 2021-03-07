@@ -42,6 +42,7 @@ export function markAttrsAccessed() {
   accessedAttrs = true
 }
 
+// 划重点: create subtree.基本作用就是执行了一遍 render 函数, 拿到 return 的 vnode. 其余的不重要
 export function renderComponentRoot(
   instance: ComponentInternalInstance
 ): VNode {
@@ -74,6 +75,7 @@ export function renderComponentRoot(
       // runtime-compiled render functions using `with` block.
       const proxyToUse = withProxy || proxy
       result = normalizeVNode(
+        // tip: render 函数的参数. 也可以在 render 里用 this 取到
         render!.call(
           proxyToUse,
           proxyToUse!,
@@ -86,6 +88,7 @@ export function renderComponentRoot(
       )
       fallthroughAttrs = attrs
     } else {
+      // tip: 函数式组件. type 就是 render 函数
       // functional
       const render = Component as FunctionalComponent
       // in dev, mark attrs accessed if optional props (attrs === props)
@@ -131,11 +134,14 @@ export function renderComponentRoot(
           shapeFlag & ShapeFlags.ELEMENT ||
           shapeFlag & ShapeFlags.COMPONENT
         ) {
+          // v-model key 的特殊处理.
+          // 'onUpdate:modelValue': value => this.$emit('update:modelValue', value)
           if (propsOptions && keys.some(isModelListener)) {
             // If a v-model listener (onUpdate:xxx) has a corresponding declared
             // prop, it indicates this component expects to handle v-model and
             // it should not fallthrough.
             // related: #1543, #1643, #1989
+            // tip: 把以 onUpdate 开头的 attr 过滤出去
             fallthroughAttrs = filterModelListeners(
               fallthroughAttrs,
               propsOptions
@@ -205,6 +211,7 @@ export function renderComponentRoot(
     if (__DEV__ && setRoot) {
       setRoot(root)
     } else {
+      // tip: 最终一般还是走这里
       result = root
     }
   } catch (err) {
