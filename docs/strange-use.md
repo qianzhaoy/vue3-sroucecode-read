@@ -122,3 +122,77 @@ instance.withProxy = new Proxy(
   }
 }
 ```
+
+
+### expose 函数
+
+组件暴露出的对象
+
+> 用法
+```javascript
+// comp-a.vue
+{
+  name: 'comp-a',
+  setup(props, { attrs, slots, emit, expose }) {
+    function getOffsetTop() {
+      // do something
+      return result
+    }
+    const observed = reactive({
+      a: 1
+    })
+    // 用法
+    expose({
+      getOffsetTop
+    })
+    return {
+      observed,
+      getOffsetTop
+    }
+  }
+}
+// comp-b.vue
+{
+  template: `
+    <comp-a ref="compa" />
+  `,
+  setup() {
+    const compa = ref(null)
+    onMounted(() => {
+      // 用了 comp-a 调用 expose 之后, ref 拿到的结果为 expose 的参数
+      compa.value // { getOffsetTop }
+      // 正常情况, comp-a 不调用 expose
+      // compa.value // coma-a instance (comp-a 的组件实例)
+    })
+    return {
+      compa
+    }
+  }
+}
+```
+
+> 源码解析
+```javascript
+// renderer.ts
+const setRef = (
+  rawRef: VNodeNormalizedRef,
+  oldRawRef: VNodeNormalizedRef | null,
+  parentComponent: ComponentInternalInstance,
+  parentSuspense: SuspenseBoundary | null,
+  vnode: VNode | null
+) => {
+  // ...
+  let value: ComponentPublicInstance | RendererNode | Record<string, any> | null
+    if (!vnode) {
+      value = null
+    } else {
+      if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        // ref value，Proxy<instance.exposed> 或者 Proxy( proxy<componentInstance> )
+        value = vnode.component!.exposed || vnode.component!.proxy
+      } else {
+        value = vnode.el
+      }
+    }
+  // ...
+}
+```

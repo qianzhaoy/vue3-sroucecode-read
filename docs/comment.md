@@ -16,6 +16,7 @@
     update: null!, // will be set synchronously right after creation
     render: null,
     proxy: null,
+    // 调用 expose, 让父组件使用 ref 获取该组件实例的时候, 组件暴露出一个对象来代替自身实例.
     exposed: null,
     // 组件上下文(ctx)的 Proxy 包装对象. 里面有 实例对象 && state && props
     withProxy: null,

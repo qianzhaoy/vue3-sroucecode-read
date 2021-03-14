@@ -547,6 +547,7 @@ function createSuspenseBoundary(
         suspense.deps++
       }
       const hydratedEl = instance.vnode.el
+      // tip: asyncDep 为异步 setup() 调用后的 promise 返回值. 
       instance
         .asyncDep!.catch(err => {
           handleError(err, instance, ErrorCodes.SETUP_FUNCTION)

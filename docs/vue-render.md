@@ -21,10 +21,12 @@ rentime-dom.ts
     // case: shapeFlag & ShapeFlags.COMPONENT
     |  processComponent()
     |  |
-    |  mountComponent()
+    |  mountComponent() (// 划重点: createInstance)
     |    |
-    |    setupComponent()
-    |    setupRenderEffect() // set update function and invoke. (invoke component render function)
+    |    setupComponent() // 划重点: invoke setup, currentInstance = instance; setup() ; currentInstance = null
+    |    setupRenderEffect() // set update function and invoke. or Suspense.registerDep(instance, setupRenderEffect)
+    |      |
+    |      render() // 划重点: invoke component render function to instance.subTree
     |      |
     | -----patch // until real element
 
