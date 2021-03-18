@@ -115,9 +115,11 @@ export const TeleportImpl = {
         }
       }
 
+      // tip: 禁用就渲染到当前模板位置
       if (disabled) {
         mount(container, mainAnchor)
       } else if (target) {
+        // tip: 否则渲染到 to 的位置
         mount(target, targetAnchor)
       }
     } else {

@@ -99,6 +99,7 @@ const vnode: VNode = {
   transition: null,
   el: null,
   anchor: null,
+  // target Teleport 中使用
   target: null,
   targetAnchor: null,
   staticCount: 0,
