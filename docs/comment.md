@@ -110,3 +110,20 @@ const vnode: VNode = {
   appContext: null
 }
 ```
+
+## 官方提供的几个 compostion API
+- useCssVars
+- useCssModule
+- useContext
+
+## 注意有两个 context
+
+### createRenderContext 
+
+ - 赋值给 instance.ctx
+ - 包含 $ 开头的实例方法和属性, 并注入全局方法和属性
+
+ - 赋值给 setup 第二个参数
+ - 只有 expoese | slots | emit | attrs
+
+instance.proxy = new Proxy(instance.ctx, PublicInstanceProxyHandlers)
